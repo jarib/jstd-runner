@@ -51,7 +51,7 @@ module JstdRunner
 
     def shutdown_hook
       at_exit {
-        body = $? ? [$!.message, $!.backtrace].flatten.join("\n") : '(empty)'
+        body = $! ? [$!.message, $!.backtrace].flatten.join("\n") : '(empty)'
         notify "exiting @ #{Time.now}", body
       }
     end

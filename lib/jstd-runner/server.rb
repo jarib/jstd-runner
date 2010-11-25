@@ -20,11 +20,15 @@ module JstdRunner
     def start
       Log.info "starting JsTestDriver"
 
+      if immediate_poller.connected?
+        raise StartupError, "JsTestDriver already running on #{@host}:#{@port}"
+      end
+
       process.start
 
       unless long_poller.connected?
         process.stop rescue nil
-        raise StartupError, "could not launch JsTestDriver server on port #{@host}:#{@port} within #{LAUNCH_TIMEOUT} seconds"
+        raise StartupError, "could not launch JsTestDriver server on #{@host}:#{@port} within #{LAUNCH_TIMEOUT} seconds"
       end
     end
 

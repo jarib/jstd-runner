@@ -37,6 +37,5 @@ module JstdRunner
     end
 
     # TODO: more specs here
-
   end
 end

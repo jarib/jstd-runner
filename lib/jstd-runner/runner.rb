@@ -25,6 +25,7 @@ module JstdRunner
         start_server
         watch_server
         start_browser
+        capture_browser
         watch_browser
       }
     end
@@ -75,6 +76,9 @@ module JstdRunner
     def start_browser
       start_vnc if options[:vnc]
       browser.start
+    end
+
+    def capture_browser
       browser.capture(server.host, server.port)
     end
 
@@ -104,6 +108,7 @@ module JstdRunner
         else
           Log.error "browser died, restarting"
           browser.restart
+          capture_browser
         end
       }
     end

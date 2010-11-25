@@ -1,9 +1,10 @@
 module JstdRunner
   class Browser
+    include Monitorable
 
     def initialize(type = :firefox)
       @type     = type
-      @switched = false
+      @switched = @restarting = false
     end
 
     def start
@@ -17,9 +18,11 @@ module JstdRunner
     end
 
     def restart
+      @restarting = true
       Log.info "restarting browser - #{@type}"
       stop rescue nil
       start
+      @restarting = false
     end
 
     def stop

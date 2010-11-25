@@ -8,7 +8,6 @@ module JstdRunner
       EM.stub!(:run).and_yield
       runner.stub!(:at_exit)
       runner.stub!(:trap)
-      runner.stub!(:monitor).and_yield
     }
 
     it "runs and watches the server" do
@@ -18,7 +17,7 @@ module JstdRunner
       server = mock(Server, :host => "localhost", :port => 4224)
       Server.should_receive(:new).with(4224).and_return(server)
       server.should_receive(:start)
-      server.should_receive(:running?).and_return(true)
+      server.should_receive(:monitor).with(10)
 
       runner.run
     end
@@ -31,7 +30,7 @@ module JstdRunner
       Browser.should_receive(:new).with(:firefox).and_return(browser)
       browser.should_receive(:start)
       browser.should_receive(:capture).with("localhost", 1234)
-      browser.should_receive(:running?).and_return(true)
+      browser.should_receive(:monitor).with(10)
 
       runner.run
     end

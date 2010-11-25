@@ -13,7 +13,8 @@ module JstdRunner
 
     def initialize
       @options = DEFAULT_OPTIONS.dup
-      @shutting_down = false
+      @shutting_down = @clean_shutdown = false
+      @server_restarting = @browser_restarting = false
     end
 
     def run
@@ -23,10 +24,8 @@ module JstdRunner
         daemonize if options[:daemonize]
         shutdown_hook
         start_server
-        watch_server
         start_browser
         capture_browser
-        watch_browser
       }
     end
 
@@ -49,24 +48,44 @@ module JstdRunner
       @shutting_down
     end
 
+    def server_restarting?
+      @server_restarting
+    end
+
+    def browser_restarting?
+      @browser_restarting
+    end
+
+    def clean_shutdown?
+      @clean_shutdown
+    end
+
     def shutdown_hook
       at_exit {
-        body = $! ? [$!.message, $!.backtrace].flatten.join("\n") : '(empty)'
-        notify "exiting @ #{Time.now}", body
+        unless clean_shutdown?
+          body = $! ? [$!.message, $!.backtrace].flatten.join("\n") : '(empty)'
+          notify "exiting @ #{Time.now}", body
+        end
       }
     end
 
     def stop
-      @shutting_down = true
+      JstdRunner.shutting_down = true
 
       stop_browser
       stop_server
 
       EM.stop
+
+      @clean_shutdown = true
     end
 
     def start_server
       server.start
+      server.monitor(options[:monitor_interval]) {
+        server.restart
+        capture_browser
+      }
     end
 
     def stop_server
@@ -76,41 +95,20 @@ module JstdRunner
     def start_browser
       start_vnc if options[:vnc]
       browser.start
+      browser.monitor(options[:monitor_interval]) {
+        browser.restart
+        capture_browser
+      }
     end
 
     def capture_browser
+      Log.info "capturing #{browser.inspect}"
       browser.capture(server.host, server.port)
     end
 
     def stop_browser
       stop_vnc if options[:vnc]
       browser.stop
-    end
-
-    def watch_server
-      monitor {
-        next if shutting_down?
-        if server.running?
-          Log.info "server ok."
-        else
-          Log.error "server died, restarting"
-          server.restart
-        end
-      }
-    end
-
-    def watch_browser
-      monitor {
-        next if shutting_down?
-
-        if browser.running?
-          Log.info "browser ok."
-        else
-          Log.error "browser died, restarting"
-          browser.restart
-          capture_browser
-        end
-      }
     end
 
     def start_vnc

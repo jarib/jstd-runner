@@ -8,6 +8,7 @@ A gem that provides a tool to launch a JsTestDriver server, capture browser(s) a
 * Support launching multiple browsers
 * Support launching browser through a remote WebDriver server
 * Configurable logging
+* Prettier logging
 
 == Note on Patches/Pull Requests
 

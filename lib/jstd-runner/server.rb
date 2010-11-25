@@ -1,5 +1,6 @@
 module JstdRunner
   class Server
+    include Monitorable
 
     class StartupError < StandardError
     end
@@ -13,8 +14,9 @@ module JstdRunner
     attr_reader :host, :port
 
     def initialize(port)
-      @host    = "127.0.0.1"
-      @port    = Integer(port)
+      @host       = "127.0.0.1"
+      @port       = Integer(port)
+      @restarting = false
     end
 
     def start
@@ -33,8 +35,12 @@ module JstdRunner
     end
 
     def restart
+      @restarting = true
+      Log.info "restaring server"
       stop rescue nil
+      @process = nil
       start
+      @restarting = false
     end
 
     def stop

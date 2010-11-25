@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Jari Bakken"]
   s.email       = ["jari.bakken@gmail.com"]
-  s.homepage    = "http://confluence.finn.no"
+  s.homepage    = "http://github.com/jarib/jstd-runner"
   s.summary     = %q{JsTestDriver wrapper}
   s.description = %q{Runs a JsTestDriver server + browsers with some built-in monitoring}
 

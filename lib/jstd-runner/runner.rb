@@ -32,9 +32,14 @@ module JstdRunner
     private
 
     def trap_signals
-      trap("INT") {
-        trap "INT", "DEFAULT"
-        Log.info "received INT, shutting down"
+      trap_signal "INT"
+      trap_signal "TERM"
+    end
+
+    def trap_signal(sig)
+      trap(sig) {
+        trap sig, "DEFAULT"
+        Log.info "received #{sig}, shutting down"
         stop
       }
     end

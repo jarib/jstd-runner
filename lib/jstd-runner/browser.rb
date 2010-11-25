@@ -13,9 +13,11 @@ module JstdRunner
     end
 
     def capture(host, port)
-      start unless @browser
+      @restarting = true
       @switched = false
+      start unless @browser
       @browser.get "http://#{host}:#{port}/capture"
+      @restarting = false
     end
 
     def restart

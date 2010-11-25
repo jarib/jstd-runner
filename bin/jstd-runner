@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "jstd-runner"
+
+JstdRunner::CLI.new(ARGV).run

@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
   s.require_path = 'lib'
 
-  s.add_dependency "selenium-webdriver", "0.1.0"
+  s.add_dependency "selenium-webdriver", ">= 0.1.4"
   s.add_dependency "eventmachine", "0.12.10"
   s.add_dependency "mail", "2.2.10"
   s.add_dependency "daemons", "1.1.0"

@@ -1,6 +1,7 @@
 require "logger"
 require "optparse"
 require "etc"
+require 'time'
 
 module JstdRunner
   Log = Logger.new(STDOUT)
@@ -25,3 +26,17 @@ require "jstd-runner/server"
 require "jstd-runner/runner"
 
 
+module EventMachine
+  def self.daily at, &blk
+    time = Time.parse(at) - Time.now
+    time += 86400 if time < 0
+
+    EM.run do
+      run_me = proc{
+        EM.add_timer(86400, run_me)
+        blk.call
+      }
+      EM.add_timer(time, run_me)
+    end
+  end
+end

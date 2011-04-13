@@ -39,7 +39,8 @@ module JstdRunner
     def running?
       Log.info "browser state: #{status}"
       true
-    rescue
+    rescue => ex
+      Log.warn "#{self}#running? caught #{ex.message}"
       false
     end
 
@@ -51,7 +52,7 @@ module JstdRunner
 
     def status_span
       unless @switched
-        @browser.switch_to.frame("0")
+        @browser.switch_to.frame(@browser.find_element(:tag_name => "frame"))
         @switched = true
       end
 

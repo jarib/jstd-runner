@@ -35,6 +35,23 @@ module JstdRunner
       runner.run
     end
 
+    it "sets up restarts" do
+      browser = mock(Browser).as_null_object
+      server = mock(Server, :host => "localhost", :port => 1234).as_null_object
+
+      runner.stub!(:browser).and_return browser
+      runner.stub!(:server).and_return server
+
+      EM.should_receive(:daily).with("01:15").and_yield
+      runner.options[:restart_at] = "01:15"
+
+      server.should_receive(:restart)
+      browser.should_receive(:restart)
+      browser.should_receive(:capture).with("localhost", 1234).twice
+
+      runner.run
+    end
+
     # TODO: more specs here
   end
 end

@@ -6,7 +6,8 @@ module JstdRunner
       :vnc              => false,
       :monitor_interval => 10,
       :browser          => :firefox,
-      :daemonize        => false
+      :daemonize        => false,
+      :restart_at       => nil
     }
 
     attr_reader :options
@@ -26,6 +27,7 @@ module JstdRunner
         start_server
         start_browser
         capture_browser
+        setup_restarts if options[:restart_at]
       }
     end
 
@@ -94,6 +96,7 @@ module JstdRunner
 
     def start_browser
       start_vnc if options[:vnc]
+
       browser.start
       browser.monitor(options[:monitor_interval]) {
         browser.restart
@@ -109,6 +112,20 @@ module JstdRunner
     def stop_browser
       stop_vnc if options[:vnc]
       browser.stop
+    end
+
+    def setup_restarts
+      EM.daily options[:restart_at] do
+        Log.warn "daily restart"
+        restart
+        Log.warn "daily restart finished."
+      end
+    end
+
+    def restart
+      browser.restart
+      server.restart
+      capture_browser
     end
 
     def start_vnc

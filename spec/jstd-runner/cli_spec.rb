@@ -43,5 +43,10 @@ module JstdRunner
       runner.should_receive(:run)
       cli.run
     end
+
+    it "configures restarts" do
+      cli "--restart 01:15"
+      runner.options[:restart_at].should == "01:15"
+    end
   end
 end

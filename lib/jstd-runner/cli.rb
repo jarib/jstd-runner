@@ -39,6 +39,10 @@ module JstdRunner
         op.on("-n", "--notify email1,email2,email3", Array) do |emails|
           runner.options[:emails] = emails
         end
+
+        op.on("-r", "--restart hour:minute") do |hour_minute|
+          runner.options[:restart_at] = hour_minute
+        end
       }.parse!(args)
     end
 

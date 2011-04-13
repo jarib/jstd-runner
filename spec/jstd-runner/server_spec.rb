@@ -8,6 +8,10 @@ module JstdRunner
     let(:connected_poller) { mock(:connected? => true, :closed? => false) }
     let(:closed_poller) {  mock(:connected? => false, :closed? => true) }
 
+    it "has a correct reference to the bundled jar" do
+      File.exist?(Server::JAR).should be_true
+    end
+
     it "launches the server on the given port" do
       server.stub!(:immediate_poller => closed_poller)
 

@@ -45,18 +45,18 @@ module JstdRunner
     end
 
     def status
-      status_span.text
+      status_spans.map { |e| e.text }.inspect
     end
 
     private
 
-    def status_span
+    def status_spans
       unless @switched
         @browser.switch_to.frame(@browser.find_element(:tag_name => "frame"))
         @switched = true
       end
 
-      @browser.find_element(:tag_name => "span")
+      @browser.find_elements(:tag_name => "span")
     end
 
   end

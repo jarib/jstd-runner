@@ -1,3 +1,3 @@
 require "jstd-runner"
 
-JstdRunner::Log.level = Logger::Severity::FATAL
+JstdRunner::Log.level = Logger::Severity::INFO

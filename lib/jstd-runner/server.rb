@@ -8,7 +8,7 @@ module JstdRunner
     class StopError < StandardError
     end
 
-    JAR            = File.expand_path("../JsTestDriver-1.3.2.jar", __FILE__)
+    JAR            = File.expand_path("../JsTestDriver-1.3.3d.jar", __FILE__)
     LAUNCH_TIMEOUT = 120 # this is huge, but I've seen it happen
 
     attr_reader :host, :port

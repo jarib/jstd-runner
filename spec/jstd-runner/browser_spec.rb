@@ -44,7 +44,7 @@ module JstdRunner
     end
 
     it "knows if the browser is running" do
-      browser.stub!(:status_span).and_return(mock(:text => "Waiting..."))
+      browser.stub!(:status_spans).and_return([mock(:text => "Waiting...")])
       browser.should be_running
     end
 

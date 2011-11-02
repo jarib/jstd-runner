@@ -11,7 +11,7 @@ module JstdRunner
     }
 
     it "runs and watches the server" do
-      browser = mock(Browser).as_null_object
+      browser = mock(Browser, :capture => nil).as_null_object
       runner.stub!(:browser).and_return(browser)
 
       server = mock(Server, :host => "localhost", :port => 4224)

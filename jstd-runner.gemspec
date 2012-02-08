@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "selenium-webdriver", ">= 0.1.4"
   s.add_dependency "eventmachine", "0.12.10"
-  s.add_dependency "mail", "2.2.10"
+  s.add_dependency "mail", "~> 2.4"
   s.add_dependency "daemons", "1.1.0"
 
   s.add_development_dependency "rspec", "~> 2.7.0"

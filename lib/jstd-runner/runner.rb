@@ -126,7 +126,6 @@ module JstdRunner
 
         # modify / process request stream
         conn.on_data do |data|
-          binding.pry
           log.puts [Time.now, conn.peer].inspect
           log.write data
 

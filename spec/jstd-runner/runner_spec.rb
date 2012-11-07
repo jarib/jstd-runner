@@ -15,7 +15,7 @@ module JstdRunner
       runner.stub!(:browser).and_return(browser)
 
       server = mock(Server, :host => "localhost", :port => 4224)
-      Server.should_receive(:new).with(4224).and_return(server)
+      Server.should_receive(:new).with(4224, nil).and_return(server)
       server.should_receive(:start)
       server.should_receive(:monitor).with(10)
 

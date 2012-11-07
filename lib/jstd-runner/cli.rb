@@ -43,6 +43,14 @@ module JstdRunner
         op.on("-r", "--restart hour:minute") do |hour_minute|
           runner.options[:restart_at] = hour_minute
         end
+
+        op.on('-t', '--traffic-log PATH') do |path|
+          runner.options[:traffic_log] = path
+        end
+
+        op.on('-j', '--jar PATH') do |path|
+          runner.options[:jar] = path
+        end
       }.parse!(args)
     end
 

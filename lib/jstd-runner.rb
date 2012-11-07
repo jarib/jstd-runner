@@ -17,6 +17,7 @@ require "daemons"
 require "socket"
 require "mail"
 require "fileutils"
+require 'em-proxy'
 
 require "jstd-runner/cli"
 require "jstd-runner/monitorable"

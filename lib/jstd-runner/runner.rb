@@ -7,15 +7,18 @@ module JstdRunner
       :monitor_interval => 10,
       :browser          => :firefox,
       :daemonize        => false,
-      :restart_at       => nil
+      :restart_at       => nil,
+      :traffic_log      => nil,
+      :jar              => nil
     }
 
     attr_reader :options
 
     def initialize
-      @options = DEFAULT_OPTIONS.dup
-      @shutting_down = @clean_shutdown = false
+      @options           = DEFAULT_OPTIONS.dup
+      @shutting_down     = @clean_shutdown = false
       @server_restarting = @browser_restarting = false
+      @server_port       = @options[:port]
     end
 
     def run
@@ -83,6 +86,11 @@ module JstdRunner
     end
 
     def start_server
+      if options[:traffic_log]
+        @server_port += 1
+        start_proxy
+      end
+
       server.start
       server.monitor(options[:monitor_interval]) {
         server.restart
@@ -102,6 +110,29 @@ module JstdRunner
         browser.restart
         capture_browser
       }
+    end
+
+    def start_proxy
+      path = options[:traffic_log]
+      FileUtils.mkdir_p File.dirname(path)
+
+      Log.info "starting proxy, logging to #{path}"
+
+      log = File.open(path, 'a')
+      server_port = @server_port
+
+      EventMachine::start_server("0.0.0.0", options[:port], EventMachine::ProxyServer::Connection, {}) do |conn|
+        conn.server :srv, {:host => "127.0.0.1", :port => server_port}
+
+        # modify / process request stream
+        conn.on_data do |data|
+          binding.pry
+          log.puts [Time.now, conn.peer].inspect
+          log.write data
+
+          data
+        end
+      end
     end
 
     def capture_browser
@@ -145,7 +176,7 @@ module JstdRunner
     end
 
     def server
-      @server ||= Server.new(options[:port])
+      @server ||= Server.new(@server_port, options[:jar])
     end
 
     def browser

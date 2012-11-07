@@ -13,14 +13,15 @@ module JstdRunner
 
     attr_reader :host, :port
 
-    def initialize(port)
+    def initialize(port, jar = nil)
       @host       = "127.0.0.1"
       @port       = Integer(port)
       @restarting = false
+      @jar        = jar || JAR
     end
 
     def start
-      Log.info "starting JsTestDriver"
+      Log.info "starting JsTestDriver from #{@jar}"
 
       if immediate_poller.connected?
         raise StartupError, "JsTestDriver already running on #{@host}:#{@port}"
@@ -36,7 +37,7 @@ module JstdRunner
 
     def restart
       @restarting = true
-      Log.info "restaring server"
+      Log.info "restarting server"
       stop rescue nil
       @process = nil
       start
@@ -60,7 +61,7 @@ module JstdRunner
 
     def process
       @process ||= (
-        proc = ChildProcess.new("java", "-jar", JAR, "--port", @port.to_s)
+        proc = ChildProcess.new("java", "-jar", @jar, "--port", @port.to_s)
         proc.io.inherit! if $DEBUG
 
         proc

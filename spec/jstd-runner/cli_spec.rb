@@ -48,5 +48,12 @@ module JstdRunner
       cli "--restart 01:15"
       runner.options[:restart_at].should == "01:15"
     end
+
+    it "configures whitelists" do
+      cli "--whitelist 127.0.0.1,192.168.41.41"
+      runner.options[:whitelist].should == ["127.0.0.1", "192.168.41.41"]
+    end
+    
+    
   end
 end

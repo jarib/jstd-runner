@@ -48,6 +48,10 @@ module JstdRunner
           runner.options[:traffic_log] = path
         end
 
+        op.on('-w', '--whitelist ip1,ips2,ip3', Array) do |ips|
+          runner.options[:whitelist] = ips
+        end
+
         op.on('-j', '--jar PATH') do |path|
           runner.options[:jar] = path
         end

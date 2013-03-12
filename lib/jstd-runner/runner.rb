@@ -86,7 +86,7 @@ module JstdRunner
     end
 
     def start_server
-      if options[:traffic_log]
+      if options[:traffic_log] || options[:whitelist]
         @server_port += 1
         start_proxy
       end
@@ -114,12 +114,23 @@ module JstdRunner
 
     def start_proxy
       path = options[:traffic_log]
-      FileUtils.mkdir_p File.dirname(path)
 
-      Log.info "starting proxy, logging to #{path}"
+      if path
+        if path == "-"
+          log = STDOUT
+        else
+          FileUtils.mkdir_p File.dirname(path)
 
-      log = File.open(path, 'a')
+          Log.info "starting proxy, logging to #{path}"
+          log = File.open(path, 'a')
+        end
+      else
+        Log.info "starting proxy"
+        log = File.open('/dev/null', 'a')
+      end
+
       server_port = @server_port
+      whitelist = options[:whitelist]
 
       EventMachine::start_server("0.0.0.0", options[:port], EventMachine::ProxyServer::Connection, {}) do |conn|
         conn.server :srv, {:host => "127.0.0.1", :port => server_port}
@@ -128,6 +139,12 @@ module JstdRunner
         conn.on_data do |data|
           log.puts [Time.now, conn.peer].inspect
           log.write data
+
+          if whitelist && !whitelist.include?(conn.peer[0])
+            log.puts({:deny => conn.peer, :whitelist => whitelist}.inspect)
+            conn.unbind
+            next
+          end
 
           data
         end
